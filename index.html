@@ -10,7 +10,7 @@
 <body>
     <!-- Экран 1: Храм -->
     <div id="temple-screen" class="screen active">
-        <div class="candle-effect"></div> <!-- Эффект свечи -->
+        <div class="candle-effect"></div>
         <img src="img/temple.jpg" alt="Храм" class="background">
         <button onclick="enterConfessional()">Войти в кабинку</button>
         <audio id="door-sound" src="audio/door.mp3"></audio>
@@ -31,15 +31,17 @@
         <div id="final-message"></div>
     </div>
 
-    <!-- Модал подтверждения -->
+    <!-- Модальное окно -->
     <div id="confirmation-modal" class="modal">
         <div class="modal-content">
             <p>Расскаиваешься ли ты?</p>
-            <button onclick="submitConfession(true)">Да</button>
-            <button onclick="submitConfession(false)">Нет</button>
+            <button data-action="yes">Да</button>
+            <button data-action="no">Нет</button>
         </div>
     </div>
 
+    <!-- Скрипты -->
     <script src="script.js"></script>
+    <script src="components/modal.js"></script>
 </body>
 </html>
