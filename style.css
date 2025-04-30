@@ -45,7 +45,7 @@ button {
     border-radius: 8px;
 }
 
-/* Эффект свечи (анимация) */
+/* Эффект свечи */
 .candle-effect {
     position: absolute;
     top: 20%;
@@ -64,7 +64,7 @@ button {
     100% { transform: scale(1) rotate(-1deg); }
 }
 
-/* Модал */
+/* Модальное окно */
 .modal {
     display: none;
     position: fixed;
@@ -82,4 +82,5 @@ button {
 }
 .modal-content button {
     margin: 10px;
+    padding: 10px 20px;
 }
