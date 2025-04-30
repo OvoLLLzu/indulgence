@@ -10,7 +10,6 @@ let choirSound = new Audio('audio/choir.mp3');
 let isAudioPlayed = false;
 
 function enterConfessional() {
-    // Переключение экранов
     document.getElementById('temple-screen').classList.remove('active');
     document.getElementById('confessional-screen').classList.add('active');
     
@@ -41,17 +40,5 @@ function confirmConfession() {
         alert('Введите текст покаяния');
         return;
     }
-    document.getElementById('confirmation-modal').style.display = 'flex';
-}
-
-function submitConfession(confirmed) {
-    const finalMessage = document.getElementById('final-message');
-    if (confirmed) {
-        finalMessage.textContent = "Ваши грехи отпущены, ступай, Дитя";
-    } else {
-        finalMessage.textContent = "Что ж, ступай, Дитя, я тебя услышал..";
-    }
-    document.getElementById('confirmation-modal').style.display = 'none';
-    document.getElementById('confessional-screen').classList.remove('active');
-    document.getElementById('final-screen').classList.add('active');
+    openModal(); // Вызов функции из modal.js
 }
