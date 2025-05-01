@@ -21,7 +21,7 @@ function enterConfessional() {
     // Автовоспроизведение хора при первом взаимодействии
     if (!isAudioPlayed) {
         choirSound.loop = true;
-        choirSound.volume = 0.3;
+        choirSound.volume = 1;
         choirSound.play().catch(() => {
             console.log('Фоновая музыка не воспроизведена');
         });
