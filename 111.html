@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Отпущение Грехов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+        }
+
+        body {
+            background: #1a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: 'Press Start 2P', cursive;
+            position: relative;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+        }
+
+        .candles-top, .candles-bottom {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 0 10px;
+            flex-wrap: wrap;
+        }
+
+        .candle {
+            position: relative;
+            margin: 0 2px;
+        }
+
+        .candle-top {
+            transform: rotate(360deg); /* Верхние свечи перевёрнуты */
+        }
+
+        .candle-bottom {
+            transform: rotate(180deg); /* Нижние свечи тоже перевёрнуты */
+        }
+
+        .candle-body {
+            width: 10px;
+            background: linear-gradient(
+                to right, 
+                #d9c9a9 0%, 
+                #f0e6d2 30%, 
+                #d9c9a9 100%
+            );
+            border: 1px solid #8a7a62;
+            border-radius: 2px;
+        }
+
+        .wick {
+            position: absolute;
+            width: 2px;
+            background: #333;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Фитиль для нижних свечей - вверху */
+        .candle-bottom .wick {
+            top: auto;
+            bottom: auto;
+            height: 4px;
+        }
+
+        /* Фитиль для верхних свечей - внизу */
+        .candle-top .wick {
+            transform: rotate(180deg);
+            bottom: auto;
+            top: auto;
+            height: 4px;
+        }
+
+        .flame {
+            position: absolute;
+            width: 6px;
+            height: 8px;
+            background: #ff9d00;
+            border-radius: 50% 50% 20% 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            box-shadow: 
+                0 0 10px #ff9d00,
+                0 0 20px #ff6b00;
+        }
+
+        /* Пламя для нижних свечей - вверху */
+        .candle-bottom .flame {
+            transform: rotate(180deg);
+            top: auto;
+            bottom: auto;
+        }
+
+        /* Пламя для верхних свечей - внизу */
+        .candle-top .flame {
+            transform: rotate(180deg);
+            bottom: auto;
+            top: auto;
+        }
+
+        .flame.active {
+            animation: flicker 0.8s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 100% {
+                height: 8px;
+                background: #ff9d00;
+                box-shadow: 
+                    0 0 10px #ff9d00,
+                    0 0 20px #ff6b00;
+            }
+            50% {
+                height: 12px;
+                background: #ffcf4a;
+                box-shadow: 
+                    0 0 15px #ff9d00,
+                    0 0 30px #ff6b00;
+            }
+        }
+
+        .button-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .main-button {
+            background: #8b0000;
+            color: #f0e6d2;
+            border: 3px solid #5a0000;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Press Start 2P', cursive;
+            box-shadow: 
+                0 0 0 3px #d9c9a9,
+                0 8px 0 0 #5a0000;
+            position: relative;
+            transition: all 0.1s;
+        }
+
+        .main-button:active {
+            transform: translateY(5px);
+            box-shadow: 
+                0 0 0 3px #d9c9a9,
+                0 3px 0 0 #5a0000;
+        }
+
+        .smoke-effect {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .smoke-particle {
+            position: absolute;
+            background: #555;
+            border-radius: 10%;
+            opacity: 0.7;
+        }
+
+        .result-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            color: #f0e6d2;
+            font-size: 20px;
+            text-align: center;
+            text-transform: uppercase;
+            text-shadow: 
+                2px 2px 0 #8b0000,
+                -2px -2px 0 #8b0000,
+                2px -2px 0 #8b0000,
+                -2px 2px 0 #8b0000;
+            letter-spacing: 2px;
+            line-height: 1.5;
+            z-index: 20;
+            opacity: 0;
+            padding: 20px;
+            background: rgba(90, 0, 0, 0.7);
+            border: 3px solid #d9c9a9;
+        }
+
+        @media (max-width: 500px) {
+            .candles-top, .candles-bottom {
+                padding: 0 5px;
+            }
+            
+            .candle-body {
+                width: 8px;
+            }
+            
+            .main-button {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+            
+            .result-text {
+                font-size: 16px;
+                width: 90%;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="candles-top">
+            <!-- Top candles will be generated here -->
+        </div>
+        
+        <div class="button-container">
+            <button class="main-button">Отпустить грехи</button>
+        </div>
+        
+        <div class="candles-bottom">
+            <!-- Bottom candles will be generated here -->
+        </div>
+        
+        <div class="smoke-effect" id="smokeEffect"><!-- Smoke particles --></div>
+        <div class="result-text" id="resultText">Ваши грехи отпущены</div>
+    </div>
+
+        
+    <!-- Аудио элементы для звуковых эффектов -->
+    <audio id="ignitionSound" preload="auto"></audio>
+    <audio id="smokeSound" preload="auto"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const topCandles = document.querySelector('.candles-top');
+            const bottomCandles = document.querySelector('.candles-bottom');
+            const button = document.querySelector('.main-button');
+            const smokeEffect = document.getElementById('smokeEffect');
+            const resultText = document.getElementById('resultText');
+            
+            // Аудио элементы
+            const ignitionSound = document.getElementById('ignitionSound');
+            const smokeSound = document.getElementById('smokeSound');
+            
+            // Генерация звука зажигания свечи с помощью Web Audio API
+            function createIgnitionSound() {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    // Настройки звука зажигания
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.3);
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                    
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.5);
+                    
+                    return true;
+                } catch (e) {
+                    console.error("Web Audio API не поддерживается:", e);
+                    return false;
+                }
+            }
+            
+            // Генерация звука дыма
+            function createSmokeSound() {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    // Настройки звука дыма
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(120, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 1.5);
+                    
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 2);
+                    
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 2);
+                    
+                    return true;
+                } catch (e) {
+                    console.error("Web Audio API не поддерживается:", e);
+                    return false;
+                }
+            }
+            
+            
+            // Generate candles with random heights
+            function generateCandles(container, isTop) {
+                container.innerHTML = '';
+                
+                const screenWidth = window.innerWidth;
+                const candleCount = Math.min(
+                    Math.floor(screenWidth / 15), 
+                    40
+                );
+                
+                const heights = [];
+                
+                for (let i = 0; i < candleCount; i++) {
+                    let height;
+                    do {
+                        height = Math.floor(Math.random() * 50) + 30;
+                    } while (heights.includes(height));
+                    heights.push(height);
+                }
+                
+                for (let i = 0; i < candleCount; i++) {
+                    const candle = document.createElement('div');
+                    candle.className = `candle ${isTop ? 'candle-top' : 'candle-bottom'}`;
+                    
+                    candle.innerHTML = `
+                        <div class="candle-body" style="height:${heights[i]}px"></div>
+                        <div class="wick"></div>
+                        <div class="flame"></div>
+                    `;
+                    
+                    container.appendChild(candle);
+                }
+            }
+            
+            // Generate candles
+            generateCandles(topCandles, true);
+            generateCandles(bottomCandles, false);
+            
+            // Handle button click
+            button.addEventListener('click', () => {
+                button.style.display = 'none';
+                
+                // Light candles sequentially
+                const allFlames = [...document.querySelectorAll('.flame')];
+                allFlames.forEach((flame, index) => {
+                    setTimeout(() => {
+                        flame.classList.add('active');
+                        flame.style.opacity = '1';
+                                                
+                        // Воспроизведение звука зажигания
+                        setTimeout(() => {
+                            createIgnitionSound();
+                        }, 50);
+                        
+                        // Last candle animation
+                        if (index === allFlames.length - 1) {
+                            setTimeout(() => {
+                                createSmokeEffect();
+                                createSmokeSound(); // Звук дыма                                
+                                setTimeout(() => {
+                                    showResultText();
+                                }, 1500);
+                            }, 500);
+                        }
+                    }, index * 100);
+                });
+            });
+            
+            // Create smoke effect
+            function createSmokeEffect() {
+                smokeEffect.style.opacity = '1';
+                
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = 'smoke-particle';
+                        
+                        const size = Math.random() * 20 + 10;
+                        particle.style.width = `${size}px`;
+                        particle.style.height = `${size}px`;
+                        
+                        const posX = Math.random() * 120 - 60;
+                        const posY = Math.random() * 120 - 60;
+                        particle.style.left = `calc(50% + ${posX}px)`;
+                        particle.style.top = `calc(50% + ${posY}px)`;
+                        
+                        smokeEffect.appendChild(particle);
+                        
+                        // Animate smoke
+                        particle.animate([
+                            { transform: 'translate(0, 0) scale(1)', opacity: 0.7 },
+                            { transform: `translate(${Math.random() * 120 - 60}px, ${Math.random() * -120 - 60}px) scale(2)`, opacity: 0 }
+                        ], {
+                            duration: 4000,
+                            easing: 'ease-out'
+                        });
+                        
+                        // Remove particle after animation
+                        setTimeout(() => {
+                            particle.remove();
+                        }, 2000);
+                    }, i * 80);
+                }
+            }
+            
+            // Show result text
+            function showResultText() {
+                resultText.style.opacity = '1';
+                resultText.animate([
+                    { transform: 'translate(-50%, -50%) scale(0)', opacity: 0 },
+                    { transform: 'translate(-50%, -50%) scale(1.2)', opacity: 1 },
+                    { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 }
+                ], {
+                    duration: 1000,
+                    fill: 'forwards'
+                });
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                generateCandles(topCandles, true);
+                generateCandles(bottomCandles, false);
+            });
+                        
+            // Инициализация звуков при первом взаимодействии
+            document.body.addEventListener('click', function initSound() {
+                // Создаем простой звук для активации аудио контекста
+                createIgnitionSound();
+                // Удаляем обработчик после первого использования
+                document.body.removeEventListener('click', initSound);
+            }, { once: true });
+        });
+    </script>
+</body>
+</html>
